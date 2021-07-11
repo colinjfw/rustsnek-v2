@@ -1,0 +1,338 @@
+board:
+  F _ _ _ _ _ _ _ _ _ 
+  M _ _ _ _ _ _ _ _ _ 
+  M _ 1 _ _ _ _ _ _ _ 
+  _ _ 1 _ _ _ _ _ _ _ 
+  _ _ 2 _ _ _ _ _ _ _ 
+  _ _ 2 _ _ _ _ _ _ _ 
+  _ _ 3 _ _ _ _ _ _ _ 
+  _ _ 3 _ _ _ _ _ _ _ 
+  _ _ _ _ _ _ _ _ _ _ 
+  _ _ _ _ _ _ _ _ _ _ 
+
+tree:
+|- Root [0] up
+   |- up [1] - -101
+   |  |- up [2] - inf
+   |  |  |- up [3] - inf
+   |  |  |  |- up [0] - inf
+   |  |  |  |  |- up [1] - inf
+   |  |  |  |  |- down [1] - inf
+   |  |  |  |  |- left [1] - inf
+   |  |  |  |  |- right [1] - 0
+   |  |  |  |- down [0] - -100
+   |  |  |  |- left [0] - inf
+   |  |  |  |  |- up [1] - inf
+   |  |  |  |  |- down [1] - inf
+   |  |  |  |  |- left [1] - inf
+   |  |  |  |  |- right [1] - 0
+   |  |  |  |- right [0] - inf
+   |  |  |     |- up [1] - inf
+   |  |  |     |- down [1] - inf
+   |  |  |     |- left [1] - inf
+   |  |  |     |- right [1] - 0
+   |  |  |- down [3] - -100
+   |  |  |- left [3] - inf
+   |  |  |  |- up [0] - inf
+   |  |  |  |  |- up [1] - inf
+   |  |  |  |  |- down [1] - inf
+   |  |  |  |  |- left [1] - inf
+   |  |  |  |  |- right [1] - 0
+   |  |  |  |- down [0] - -100
+   |  |  |  |- left [0] - inf
+   |  |  |  |  |- up [1] - inf
+   |  |  |  |  |- down [1] - inf
+   |  |  |  |  |- left [1] - inf
+   |  |  |  |  |- right [1] - 0
+   |  |  |  |- right [0] - inf
+   |  |  |     |- up [1] - inf
+   |  |  |     |- down [1] - inf
+   |  |  |     |- left [1] - inf
+   |  |  |     |- right [1] - 0
+   |  |  |- right [3] - inf
+   |  |     |- up [0] - inf
+   |  |     |  |- up [1] - inf
+   |  |     |  |- down [1] - inf
+   |  |     |  |- left [1] - inf
+   |  |     |  |- right [1] - 0
+   |  |     |- down [0] - -100
+   |  |     |- left [0] - inf
+   |  |     |  |- up [1] - inf
+   |  |     |  |- down [1] - inf
+   |  |     |  |- left [1] - inf
+   |  |     |  |- right [1] - 0
+   |  |     |- right [0] - inf
+   |  |        |- up [1] - inf
+   |  |        |- down [1] - inf
+   |  |        |- left [1] - inf
+   |  |        |- right [1] - 0
+   |  |- down [2] - -100
+   |  |- left [2] - inf
+   |  |  |- up [3] - inf
+   |  |  |  |- up [0] - inf
+   |  |  |  |  |- up [1] - inf
+   |  |  |  |  |- down [1] - inf
+   |  |  |  |  |- left [1] - inf
+   |  |  |  |  |- right [1] - 0
+   |  |  |  |- down [0] - -100
+   |  |  |  |- left [0] - inf
+   |  |  |  |  |- up [1] - inf
+   |  |  |  |  |- down [1] - inf
+   |  |  |  |  |- left [1] - inf
+   |  |  |  |  |- right [1] - 0
+   |  |  |  |- right [0] - inf
+   |  |  |     |- up [1] - inf
+   |  |  |     |- down [1] - inf
+   |  |  |     |- left [1] - inf
+   |  |  |     |- right [1] - 0
+   |  |  |- down [3] - -100
+   |  |  |- left [3] - inf
+   |  |  |  |- up [0] - inf
+   |  |  |  |  |- up [1] - inf
+   |  |  |  |  |- down [1] - inf
+   |  |  |  |  |- left [1] - inf
+   |  |  |  |  |- right [1] - 0
+   |  |  |  |- down [0] - -100
+   |  |  |  |- left [0] - inf
+   |  |  |  |  |- up [1] - inf
+   |  |  |  |  |- down [1] - inf
+   |  |  |  |  |- left [1] - inf
+   |  |  |  |  |- right [1] - 0
+   |  |  |  |- right [0] - inf
+   |  |  |     |- up [1] - inf
+   |  |  |     |- down [1] - inf
+   |  |  |     |- left [1] - inf
+   |  |  |     |- right [1] - 0
+   |  |  |- right [3] - inf
+   |  |     |- up [0] - inf
+   |  |     |  |- up [1] - inf
+   |  |     |  |- down [1] - inf
+   |  |     |  |- left [1] - inf
+   |  |     |  |- right [1] - 0
+   |  |     |- down [0] - -100
+   |  |     |- left [0] - inf
+   |  |     |  |- up [1] - inf
+   |  |     |  |- down [1] - inf
+   |  |     |  |- left [1] - inf
+   |  |     |  |- right [1] - 0
+   |  |     |- right [0] - inf
+   |  |        |- up [1] - inf
+   |  |        |- down [1] - inf
+   |  |        |- left [1] - inf
+   |  |        |- right [1] - 0
+   |  |- right [2] - inf
+   |     |- up [3] - inf
+   |     |  |- up [0] - inf
+   |     |  |  |- up [1] - inf
+   |     |  |  |- down [1] - inf
+   |     |  |  |- left [1] - inf
+   |     |  |  |- right [1] - 0
+   |     |  |- down [0] - -100
+   |     |  |- left [0] - inf
+   |     |  |  |- up [1] - inf
+   |     |  |  |- down [1] - inf
+   |     |  |  |- left [1] - inf
+   |     |  |  |- right [1] - 0
+   |     |  |- right [0] - inf
+   |     |     |- up [1] - inf
+   |     |     |- down [1] - inf
+   |     |     |- left [1] - inf
+   |     |     |- right [1] - 0
+   |     |- down [3] - -100
+   |     |- left [3] - inf
+   |     |  |- up [0] - inf
+   |     |  |  |- up [1] - inf
+   |     |  |  |- down [1] - inf
+   |     |  |  |- left [1] - inf
+   |     |  |  |- right [1] - 0
+   |     |  |- down [0] - -100
+   |     |  |- left [0] - inf
+   |     |  |  |- up [1] - inf
+   |     |  |  |- down [1] - inf
+   |     |  |  |- left [1] - inf
+   |     |  |  |- right [1] - 0
+   |     |  |- right [0] - inf
+   |     |     |- up [1] - inf
+   |     |     |- down [1] - inf
+   |     |     |- left [1] - inf
+   |     |     |- right [1] - 0
+   |     |- right [3] - inf
+   |        |- up [0] - inf
+   |        |  |- up [1] - inf
+   |        |  |- down [1] - inf
+   |        |  |- left [1] - inf
+   |        |  |- right [1] - 0
+   |        |- down [0] - -100
+   |        |- left [0] - inf
+   |        |  |- up [1] - inf
+   |        |  |- down [1] - inf
+   |        |  |- left [1] - inf
+   |        |  |- right [1] - 0
+   |        |- right [0] - inf
+   |           |- up [1] - inf
+   |           |- down [1] - inf
+   |           |- left [1] - inf
+   |           |- right [1] - 0
+   |- down [1] - inf
+   |- left [1] - inf
+   |- right [1] - -100
+      |- up [2] - inf
+      |  |- up [3] - inf
+      |  |  |- up [0] - inf
+      |  |  |  |- up [1] - 0
+      |  |  |  |- down [1] - 0
+      |  |  |  |- left [1] - inf
+      |  |  |  |- right [1] - inf
+      |  |  |- down [0] - -100
+      |  |  |- left [0] - inf
+      |  |  |  |- up [1] - 0
+      |  |  |  |- down [1] - 0
+      |  |  |  |- left [1] - inf
+      |  |  |  |- right [1] - inf
+      |  |  |- right [0] - inf
+      |  |     |- up [1] - 0
+      |  |     |- down [1] - 0
+      |  |     |- left [1] - inf
+      |  |     |- right [1] - inf
+      |  |- down [3] - -100
+      |  |- left [3] - inf
+      |  |  |- up [0] - inf
+      |  |  |  |- up [1] - 0
+      |  |  |  |- down [1] - 0
+      |  |  |  |- left [1] - inf
+      |  |  |  |- right [1] - inf
+      |  |  |- down [0] - -100
+      |  |  |- left [0] - inf
+      |  |  |  |- up [1] - 0
+      |  |  |  |- down [1] - 0
+      |  |  |  |- left [1] - inf
+      |  |  |  |- right [1] - inf
+      |  |  |- right [0] - inf
+      |  |     |- up [1] - 0
+      |  |     |- down [1] - 0
+      |  |     |- left [1] - inf
+      |  |     |- right [1] - inf
+      |  |- right [3] - inf
+      |     |- up [0] - inf
+      |     |  |- up [1] - 0
+      |     |  |- down [1] - 0
+      |     |  |- left [1] - inf
+      |     |  |- right [1] - inf
+      |     |- down [0] - -100
+      |     |- left [0] - inf
+      |     |  |- up [1] - 0
+      |     |  |- down [1] - 0
+      |     |  |- left [1] - inf
+      |     |  |- right [1] - inf
+      |     |- right [0] - inf
+      |        |- up [1] - 0
+      |        |- down [1] - 0
+      |        |- left [1] - inf
+      |        |- right [1] - inf
+      |- down [2] - -100
+      |- left [2] - inf
+      |  |- up [3] - inf
+      |  |  |- up [0] - inf
+      |  |  |  |- up [1] - 0
+      |  |  |  |- down [1] - inf
+      |  |  |  |- left [1] - inf
+      |  |  |  |- right [1] - 0
+      |  |  |- down [0] - -100
+      |  |  |- left [0] - inf
+      |  |  |  |- up [1] - 0
+      |  |  |  |- down [1] - inf
+      |  |  |  |- left [1] - inf
+      |  |  |  |- right [1] - 0
+      |  |  |- right [0] - inf
+      |  |     |- up [1] - 0
+      |  |     |- down [1] - inf
+      |  |     |- left [1] - inf
+      |  |     |- right [1] - 0
+      |  |- down [3] - -100
+      |  |- left [3] - inf
+      |  |  |- up [0] - inf
+      |  |  |  |- up [1] - 0
+      |  |  |  |- down [1] - inf
+      |  |  |  |- left [1] - inf
+      |  |  |  |- right [1] - 0
+      |  |  |- down [0] - -100
+      |  |  |- left [0] - inf
+      |  |  |  |- up [1] - 0
+      |  |  |  |- down [1] - inf
+      |  |  |  |- left [1] - inf
+      |  |  |  |- right [1] - 0
+      |  |  |- right [0] - inf
+      |  |     |- up [1] - 0
+      |  |     |- down [1] - inf
+      |  |     |- left [1] - inf
+      |  |     |- right [1] - 0
+      |  |- right [3] - inf
+      |     |- up [0] - inf
+      |     |  |- up [1] - 0
+      |     |  |- down [1] - inf
+      |     |  |- left [1] - inf
+      |     |  |- right [1] - 0
+      |     |- down [0] - -100
+      |     |- left [0] - inf
+      |     |  |- up [1] - 0
+      |     |  |- down [1] - inf
+      |     |  |- left [1] - inf
+      |     |  |- right [1] - 0
+      |     |- right [0] - inf
+      |        |- up [1] - 0
+      |        |- down [1] - inf
+      |        |- left [1] - inf
+      |        |- right [1] - 0
+      |- right [2] - inf
+         |- up [3] - inf
+         |  |- up [0] - inf
+         |  |  |- up [1] - 0
+         |  |  |- down [1] - 0
+         |  |  |- left [1] - inf
+         |  |  |- right [1] - 0
+         |  |- down [0] - -100
+         |  |- left [0] - inf
+         |  |  |- up [1] - 0
+         |  |  |- down [1] - 0
+         |  |  |- left [1] - inf
+         |  |  |- right [1] - 0
+         |  |- right [0] - inf
+         |     |- up [1] - 0
+         |     |- down [1] - 0
+         |     |- left [1] - inf
+         |     |- right [1] - 0
+         |- down [3] - -100
+         |- left [3] - inf
+         |  |- up [0] - inf
+         |  |  |- up [1] - 0
+         |  |  |- down [1] - 0
+         |  |  |- left [1] - inf
+         |  |  |- right [1] - 0
+         |  |- down [0] - -100
+         |  |- left [0] - inf
+         |  |  |- up [1] - 0
+         |  |  |- down [1] - 0
+         |  |  |- left [1] - inf
+         |  |  |- right [1] - 0
+         |  |- right [0] - inf
+         |     |- up [1] - 0
+         |     |- down [1] - 0
+         |     |- left [1] - inf
+         |     |- right [1] - 0
+         |- right [3] - inf
+            |- up [0] - inf
+            |  |- up [1] - 0
+            |  |- down [1] - 0
+            |  |- left [1] - inf
+            |  |- right [1] - 0
+            |- down [0] - -100
+            |- left [0] - inf
+            |  |- up [1] - 0
+            |  |- down [1] - 0
+            |  |- left [1] - inf
+            |  |- right [1] - 0
+            |- right [0] - inf
+               |- up [1] - 0
+               |- down [1] - 0
+               |- left [1] - inf
+               |- right [1] - 0

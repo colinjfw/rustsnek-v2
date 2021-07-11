@@ -31,10 +31,12 @@ pub enum Direction {
 pub struct MoveRequest<'a> {
     pub game: Game,
     pub turn: u16,
-    pub board: Board,
 
     #[serde(borrow)]
-    pub you: MySnake<'a>,
+    pub board: Board<'a>,
+
+    #[serde(borrow)]
+    pub you: Snake<'a>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -45,24 +47,28 @@ pub struct Game {
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct Board {
+pub struct Board<'a> {
     pub height: u16,
     pub width: u16,
     pub food: Vec<Point>,
     pub hazards: Vec<Point>,
+
+    #[serde(borrow)]
+    pub snakes: Vec<Snake<'a>>,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct MySnake<'a> {
+pub struct Snake<'a> {
     pub id: &'a str,
     pub health: u16,
     pub length: u16,
+    pub body: Vec<Point>,
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Point {
-    pub x: u16,
-    pub y: u16,
+    pub x: i16,
+    pub y: i16,
 }
