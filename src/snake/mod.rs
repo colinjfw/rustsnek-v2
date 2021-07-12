@@ -3,6 +3,7 @@ mod minmax;
 
 pub use api::run;
 use std::fmt;
+use std::time::Duration;
 
 type Pos = (isize, isize);
 
@@ -14,11 +15,28 @@ enum Move {
     Right,
 }
 
+impl Move {
+    fn all() -> [Move; 4] {
+        [Move::Up, Move::Down, Move::Left, Move::Right]
+    }
+
+    fn next(&self, pos: Pos) -> Pos {
+        match self {
+            Move::Up => (pos.0, pos.1 + 1),
+            Move::Down => (pos.0, pos.1 - 1),
+            Move::Left => (pos.0 - 1, pos.1),
+            Move::Right => (pos.0 + 1, pos.1),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy)]
 enum Result {
     None,
     Eat,
     Dead,
+    Kill,
+    KillMe,
     Off,
 }
 
@@ -44,7 +62,6 @@ impl SnakeID {
 
 #[derive(Clone, Copy, Debug)]
 enum Square {
-    Me,
     Snake(SnakeID),
     Food,
     Empty,
@@ -53,13 +70,20 @@ enum Square {
 
 #[derive(Clone, Debug)]
 struct Snake {
-    me: bool,
     body: Vec<Pos>,
 }
 
 impl Snake {
     fn head(&self) -> Pos {
         self.body[0]
+    }
+
+    fn len(&self) -> usize {
+        self.body.len()
+    }
+
+    fn new(body: Vec<Pos>) -> Snake {
+        Snake { body }
     }
 }
 
@@ -90,7 +114,7 @@ impl Board {
         for (i, snake) in self.snakes.iter().enumerate() {
             for point in &snake.body {
                 if *point == pos {
-                    return if snake.me { Square::Me } else { Square::Snake(SnakeID(i)) };
+                    return Square::Snake(SnakeID(i));
                 }
             }
         }
@@ -132,13 +156,18 @@ impl Node {
         self.edges.is_empty()
     }
 
-    fn walk(board: Board) -> Node {
-        minmax::walk(board)
+    fn walk(board: Board, opts: Options) -> Node {
+        minmax::walk(board, opts)
     }
 
     fn pick(&self) -> Move {
         minmax::pick(self)
     }
+}
+
+struct Options {
+    max_depth: usize,
+    sla: Duration,
 }
 
 impl fmt::Display for Board {
@@ -148,7 +177,6 @@ impl fmt::Display for Board {
             write!(f, "  ")?;
             for x in 0..self.width {
                 match self.get((x, y)) {
-                    Square::Me => write!(f, "M ")?,
                     Square::Snake(i) => write!(f, "{} ", i.0)?,
                     Square::Food => write!(f, "F ")?,
                     Square::Empty => write!(f, "_ ")?,
@@ -184,7 +212,7 @@ impl fmt::Display for Node {
                     let name = format!(
                         "{} [{}] - {}",
                         child.moved,
-                        child.next.player.0,
+                        node.player.0,
                         minmax::score(node, child)
                     );
                     pprint_tree(f, &child.next, name, prefix.to_string(), i == last_child)?;

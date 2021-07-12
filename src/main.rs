@@ -51,7 +51,7 @@ impl Handler {
             match path {
                 "/move" => {
                     let req: api::MoveRequest = serde_json::from_slice(content)?;
-                    debug!("/move request: {}", str::from_utf8(content).unwrap());
+                    info!("/move request: {}", str::from_utf8(content).unwrap());
                     let direction = snake::run(&req);
                     serde_json::to_writer(
                         &mut self.response_buf,

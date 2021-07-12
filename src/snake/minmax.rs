@@ -1,10 +1,14 @@
 use super::*;
+use std::time::Instant;
 
-const MAX_DEPTH: usize = 5;
 const INF: f32 = std::f32::INFINITY;
 
-pub(super) fn walk(board: Board) -> Node {
-    walk_inner(Result::None, board, SnakeID(0), 0)
+pub(super) fn walk(board: Board, opts: Options) -> Node {
+    Walker {
+        opts: opts,
+        start: Instant::now(),
+    }
+    .walk_inner(Result::None, board, SnakeID(0), 0)
 }
 
 pub(super) fn pick(node: &Node) -> Move {
@@ -20,18 +24,25 @@ pub(super) fn pick(node: &Node) -> Move {
 
 pub(super) fn score(source: &Node, edge: &Edge) -> f32 {
     fn minimize(edge: &Edge) -> f32 {
-        let node = &edge.next;
-
-        // Cost to my snake
+        // Cost to my snake.
         fn cost(edge: &Edge) -> f32 {
-            match edge.next.result {
+            let mut cost = match edge.next.result {
                 Result::Off => INF,
                 Result::Dead => INF,
-                Result::Eat => -1.0,
+                Result::Eat => -20.0,
                 Result::None => 0.0,
+                Result::KillMe => INF,
+                Result::Kill => -10.0,
+            };
+            for next_edge in &edge.next.edges {
+                if let Result::KillMe = next_edge.next.result {
+                    cost += 100.0;
+                }
             }
+            cost
         }
 
+        let node = &edge.next;
         let cost = cost(edge);
         if node.is_leaf() {
             return cost;
@@ -50,13 +61,16 @@ pub(super) fn score(source: &Node, edge: &Edge) -> f32 {
     fn maximize(edge: &Edge) -> f32 {
         let node = &edge.next;
 
-        // Benefit to me of actions from another snake
+        // Cost to me of actions from another snake, negative values represent a benefit
+        // that we reward in the model. Killing our own snake is a very bad outcome.
         fn cost(edge: &Edge) -> f32 {
             match edge.next.result {
                 Result::Off => -10.0,
-                Result::Dead => -100.0,
+                Result::Dead => -10.0,
                 Result::Eat => 5.0,
                 Result::None => 0.0,
+                Result::KillMe => INF,
+                Result::Kill => 0.0,
             }
         }
 
@@ -82,44 +96,47 @@ pub(super) fn score(source: &Node, edge: &Edge) -> f32 {
     }
 }
 
-fn prune(result: Result, depth: usize) -> bool {
-    matches!(result, Result::Dead | Result::Off) || depth >= MAX_DEPTH
+struct Walker {
+    opts: Options,
+    start: Instant,
 }
 
-fn walk_inner(result: Result, board: Board, player: SnakeID, depth: usize) -> Node {
-    let mut node = Node {
-        board,
-        edges: Vec::with_capacity(4),
-        player,
-        result,
-    };
-    if !prune(result, depth) {
-        for m in [Move::Up, Move::Down, Move::Left, Move::Right] {
-            let (result, next_board) = play(&node.board, m, player);
-            let next_edge = Edge {
-                moved: m,
-                next: walk_inner(
-                    result,
-                    next_board,
-                    node.board.next_player(player),
-                    depth + 1,
-                ),
-            };
-            node.edges.push(next_edge);
-        }
+impl Walker {
+    fn prune(&self, result: Result, depth: usize) -> bool {
+        matches!(result, Result::Dead | Result::Off | Result::KillMe)
+            || depth >= self.opts.max_depth
+            || self.start.elapsed() >= self.opts.sla
     }
-    node
-}
 
+    fn walk_inner(&mut self, result: Result, board: Board, player: SnakeID, depth: usize) -> Node {
+        let mut node = Node {
+            board,
+            edges: Vec::with_capacity(4),
+            player,
+            result,
+        };
+        if !self.prune(result, depth) {
+            for m in Move::all() {
+                let (result, next_board) = play(&node.board, m, player);
+                let next_edge = Edge {
+                    moved: m,
+                    next: self.walk_inner(
+                        result,
+                        next_board,
+                        node.board.next_player(player),
+                        depth + 1,
+                    ),
+                };
+                node.edges.push(next_edge);
+            }
+        }
+        node
+    }
+}
 
 fn play(board: &Board, m: Move, player: SnakeID) -> (Result, Board) {
     let head = board.snake(player).head();
-    let next_head = match m {
-        Move::Up => (head.0, head.1 + 1),
-        Move::Down => (head.0, head.1 - 1),
-        Move::Left => (head.0 - 1, head.1),
-        Move::Right => (head.0 + 1, head.1),
-    };
+    let next_head = m.next(head);
     let mut next_board = board.clone();
     let mut next_snake = next_board.snake(player).clone();
 
@@ -133,10 +150,18 @@ fn play(board: &Board, m: Move, player: SnakeID) -> (Result, Board) {
             next_snake.body.pop();
             Result::None
         }
-        Square::Me => Result::Dead,
-        Square::Snake(_) => {
-            Result::Dead
-        },
+        Square::Snake(s) => {
+            let snake = next_board.snake(s);
+            if next_snake.len() > snake.len() && next_head == snake.head() {
+                if s.is_me() {
+                    Result::KillMe
+                } else {
+                    Result::Kill
+                }
+            } else {
+                Result::Dead
+            }
+        }
     };
 
     next_snake.body.insert(0, next_head);
@@ -151,14 +176,6 @@ mod test {
     use std::fs::File;
     use std::io::Write;
 
-    impl Snake {
-        fn me(body: Vec<Pos>) -> Snake {
-            Snake { me: true, body }
-        }
-        fn other(body: Vec<Pos>) -> Snake {
-            Snake { me: false, body }
-        }
-    }
 
     #[test]
     fn basic_single_player_setup() {
@@ -166,10 +183,16 @@ mod test {
             width: 5,
             height: 5,
             food: vec![(0, 0)],
-            snakes: vec![Snake::me(vec![(0, 1), (0, 2)])],
+            snakes: vec![Snake::new(vec![(0, 1), (0, 2)])],
         };
 
-        let node = Node::walk(board);
+        let node = Node::walk(
+            board,
+            Options {
+                max_depth: 2,
+                sla: Duration::from_secs(20),
+            },
+        );
         snap("basic_single_player_setup", &node);
     }
 
@@ -180,12 +203,18 @@ mod test {
             height: 5,
             food: vec![(0, 0)],
             snakes: vec![
-                Snake::me(vec![(0, 1), (0, 2)]),
-                Snake::other(vec![(2, 2), (2, 3)]),
+                Snake::new(vec![(0, 1), (0, 2)]),
+                Snake::new(vec![(2, 2), (2, 3)]),
             ],
         };
 
-        let node = Node::walk(board);
+        let node = Node::walk(
+            board,
+            Options {
+                max_depth: 2,
+                sla: Duration::from_secs(20),
+            },
+        );
         snap("basic_multi_player_setup", &node);
     }
 
@@ -196,15 +225,62 @@ mod test {
             height: 10,
             food: vec![(0, 0)],
             snakes: vec![
-                Snake::me(vec![(0, 1), (0, 2)]),
-                Snake::other(vec![(2, 2), (2, 3)]),
-                Snake::other(vec![(2, 4), (2, 5)]),
-                Snake::other(vec![(2, 6), (2, 7)]),
+                Snake::new(vec![(0, 1), (0, 2)]),
+                Snake::new(vec![(2, 2), (2, 3)]),
+                Snake::new(vec![(2, 4), (2, 5)]),
+                Snake::new(vec![(2, 6), (2, 7)]),
             ],
         };
 
-        let node = Node::walk(board);
+        let node = Node::walk(
+            board,
+            Options {
+                max_depth: 2,
+                sla: Duration::from_secs(20),
+            },
+        );
         snap("basic_large_player_setup", &node);
+    }
+
+    #[test]
+    fn potential_death() {
+        let board = Board {
+            width: 5,
+            height: 5,
+            food: vec![],
+            snakes: vec![
+                Snake::new(vec![(1, 0)]),
+                Snake::new(vec![(0, 1), (0, 2), (0, 3)]),
+            ],
+        };
+
+        let node = Node::walk(
+            board,
+            Options {
+                max_depth: 2,
+                sla: Duration::from_secs(20),
+            },
+        );
+        snap("potential_death", &node);
+    }
+
+    #[test]
+    fn eats_food() {
+        let board = Board {
+            width: 5,
+            height: 5,
+            food: vec![(0, 0)],
+            snakes: vec![Snake::new(vec![(1, 0)])],
+        };
+
+        let node = Node::walk(
+            board,
+            Options {
+                max_depth: 2,
+                sla: Duration::from_secs(20),
+            },
+        );
+        snap("eats_food", &node);
     }
 
     fn snap(name: &str, node: &Node) {
