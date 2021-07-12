@@ -4,7 +4,7 @@ const MAX_DEPTH: usize = 5;
 const INF: f32 = std::f32::INFINITY;
 
 pub(super) fn walk(board: Board) -> Node {
-    walk_inner(Result::None, board, 0, 0)
+    walk_inner(Result::None, board, SnakeID(0), 0)
 }
 
 pub(super) fn pick(node: &Node) -> Move {
@@ -75,7 +75,7 @@ pub(super) fn score(source: &Node, edge: &Edge) -> f32 {
         max
     }
 
-    if source.is_me() {
+    if source.player.is_me() {
         minimize(edge)
     } else {
         maximize(edge)
@@ -86,7 +86,7 @@ fn prune(result: Result, depth: usize) -> bool {
     matches!(result, Result::Dead | Result::Off) || depth >= MAX_DEPTH
 }
 
-fn walk_inner(result: Result, board: Board, player: usize, depth: usize) -> Node {
+fn walk_inner(result: Result, board: Board, player: SnakeID, depth: usize) -> Node {
     let mut node = Node {
         board,
         edges: Vec::with_capacity(4),
@@ -101,7 +101,7 @@ fn walk_inner(result: Result, board: Board, player: usize, depth: usize) -> Node
                 next: walk_inner(
                     result,
                     next_board,
-                    next_player(&node.board, player),
+                    node.board.next_player(player),
                     depth + 1,
                 ),
             };
@@ -111,23 +111,17 @@ fn walk_inner(result: Result, board: Board, player: usize, depth: usize) -> Node
     node
 }
 
-fn next_player(board: &Board, player: usize) -> usize {
-    if player + 1 >= board.snakes.len() {
-        return 0;
-    }
-    return player + 1;
-}
 
-fn play(board: &Board, m: Move, player: usize) -> (Result, Board) {
-    let head = board.snakes[player].body[0];
+fn play(board: &Board, m: Move, player: SnakeID) -> (Result, Board) {
+    let head = board.snake(player).head();
     let next_head = match m {
-        Move::Up => (head.0, head.1 - 1),
-        Move::Down => (head.0, head.1 + 1),
+        Move::Up => (head.0, head.1 + 1),
+        Move::Down => (head.0, head.1 - 1),
         Move::Left => (head.0 - 1, head.1),
         Move::Right => (head.0 + 1, head.1),
     };
     let mut next_board = board.clone();
-    let mut next_snake = next_board.snakes[player].clone();
+    let mut next_snake = next_board.snake(player).clone();
 
     let result = match next_board.get(next_head) {
         Square::Off => Result::Off,
@@ -139,11 +133,14 @@ fn play(board: &Board, m: Move, player: usize) -> (Result, Board) {
             next_snake.body.pop();
             Result::None
         }
-        Square::Me | Square::Snake(_) => Result::Dead,
+        Square::Me => Result::Dead,
+        Square::Snake(_) => {
+            Result::Dead
+        },
     };
 
     next_snake.body.insert(0, next_head);
-    next_board.snakes[player] = next_snake;
+    next_board.set_snake(player, next_snake);
     (result, next_board)
 }
 

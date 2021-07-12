@@ -1,1 +1,4 @@
 /target
+/build/deploy.pem
+/build/snake
+/build/ngrok

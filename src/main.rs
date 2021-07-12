@@ -40,7 +40,7 @@ impl Handler {
             .and_then(|value| value.parse::<usize>().ok())
         {
             Some(len) => len,
-            None => return Result::Err(Error::from(ErrorKind::InvalidInput)),
+            None => 0,
         };
         let content = &self.request_buf[content_start..(content_start+content_len)];
 
@@ -51,6 +51,7 @@ impl Handler {
             match path {
                 "/move" => {
                     let req: api::MoveRequest = serde_json::from_slice(content)?;
+                    debug!("/move request: {}", str::from_utf8(content).unwrap());
                     let direction = snake::run(&req);
                     serde_json::to_writer(
                         &mut self.response_buf,
@@ -108,5 +109,5 @@ fn server(s: &'static str) {
 
 fn main() {
     env_logger::init();
-    server("127.0.0.1:3000");
+    server("0.0.0.0:3000");
 }

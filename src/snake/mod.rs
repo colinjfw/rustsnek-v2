@@ -34,9 +34,18 @@ impl fmt::Display for Move {
 }
 
 #[derive(Clone, Copy, Debug)]
+struct SnakeID(usize);
+
+impl SnakeID {
+    fn is_me(&self) -> bool {
+        self.0 == 0
+    }
+}
+
+#[derive(Clone, Copy, Debug)]
 enum Square {
     Me,
-    Snake(usize),
+    Snake(SnakeID),
     Food,
     Empty,
     Off,
@@ -46,6 +55,12 @@ enum Square {
 struct Snake {
     me: bool,
     body: Vec<Pos>,
+}
+
+impl Snake {
+    fn head(&self) -> Pos {
+        self.body[0]
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -75,11 +90,26 @@ impl Board {
         for (i, snake) in self.snakes.iter().enumerate() {
             for point in &snake.body {
                 if *point == pos {
-                    return if snake.me { Square::Me } else { Square::Snake(i) };
+                    return if snake.me { Square::Me } else { Square::Snake(SnakeID(i)) };
                 }
             }
         }
         Square::Empty
+    }
+
+    fn snake(&self, player: SnakeID) -> &Snake {
+        &self.snakes[player.0]
+    }
+
+    fn set_snake(&mut self, player: SnakeID, snake: Snake) {
+        self.snakes[player.0] = snake;
+    }
+
+    fn next_player(&self, player: SnakeID) -> SnakeID {
+        if player.0 + 1 >= self.snakes.len() {
+            return SnakeID(0);
+        }
+        return SnakeID(player.0 + 1);
     }
 }
 
@@ -93,17 +123,13 @@ struct Edge {
 struct Node {
     board: Board,
     edges: Vec<Edge>,
-    player: usize,
+    player: SnakeID,
     result: Result,
 }
 
 impl Node {
     fn is_leaf(&self) -> bool {
         self.edges.is_empty()
-    }
-
-    fn is_me(&self) -> bool {
-        self.player == 0
     }
 
     fn walk(board: Board) -> Node {
@@ -117,12 +143,13 @@ impl Node {
 
 impl fmt::Display for Board {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        for y in 0..self.height {
+        for row in 0..self.height {
+            let y = self.height - row - 1;
             write!(f, "  ")?;
             for x in 0..self.width {
                 match self.get((x, y)) {
                     Square::Me => write!(f, "M ")?,
-                    Square::Snake(i) => write!(f, "{} ", i)?,
+                    Square::Snake(i) => write!(f, "{} ", i.0)?,
                     Square::Food => write!(f, "F ")?,
                     Square::Empty => write!(f, "_ ")?,
                     Square::Off => unreachable!(),
@@ -157,7 +184,7 @@ impl fmt::Display for Node {
                     let name = format!(
                         "{} [{}] - {}",
                         child.moved,
-                        child.next.player,
+                        child.next.player.0,
                         minmax::score(node, child)
                     );
                     pprint_tree(f, &child.next, name, prefix.to_string(), i == last_child)?;
@@ -169,7 +196,7 @@ impl fmt::Display for Node {
         pprint_tree(
             f,
             self,
-            format!("Root [{}] {}", self.player, self.pick()),
+            format!("Root [{}] {}", self.player.0, self.pick()),
             "".to_string(),
             true,
         )
