@@ -39,7 +39,7 @@ pub fn run(req: &api::MoveRequest) -> api::Direction {
         from_request(req),
         Options {
             max_depth: 20,
-            sla: Duration::from_millis(50),
+            sla: Duration::from_millis(75),
         },
     );
 
