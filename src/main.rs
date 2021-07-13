@@ -10,6 +10,15 @@ use std::net::{TcpListener, TcpStream};
 use std::str;
 use std::time::Instant;
 
+const SNAKE: api::RootResponse = api::RootResponse {
+    api_version: "1",
+    author: "colinjfw",
+    color: "#FF69B4",
+    head: "default",
+    tail: "default",
+    version: "v0.0.2",
+};
+
 const HTTP_OK: &[u8] = "HTTP/1.1 200 OK\r\ncontent-type: application/json\r\n\r\n".as_bytes();
 
 struct Handler {
@@ -42,7 +51,7 @@ impl Handler {
             Some(len) => len,
             None => 0,
         };
-        let content = &self.request_buf[content_start..(content_start+content_len)];
+        let content = &self.request_buf[content_start..(content_start + content_len)];
 
         self.response_buf.truncate(0);
         self.response_buf.write(HTTP_OK)?;
@@ -55,23 +64,11 @@ impl Handler {
                     let direction = snake::run(&req);
                     serde_json::to_writer(
                         &mut self.response_buf,
-                        &api::MoveResponse {
-                            direction,
-                        },
+                        &api::MoveResponse { direction },
                     )?;
                 }
                 _ => {
-                    serde_json::to_writer(
-                        &mut self.response_buf,
-                        &api::RootResponse {
-                            api_version: "1",
-                            author: "colinjfw",
-                            color: "red",
-                            head: "default",
-                            tail: "default",
-                            version: "0.0.1",
-                        },
-                    )?;
+                    serde_json::to_writer(&mut self.response_buf, &SNAKE)?;
                 }
             };
         };

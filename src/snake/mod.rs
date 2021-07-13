@@ -1,6 +1,9 @@
 mod api;
 mod minmax;
 
+#[cfg(test)]
+mod tests;
+
 pub use api::run;
 use std::fmt;
 use std::time::Duration;
@@ -160,10 +163,6 @@ impl Node {
         minmax::walk(board, opts)
     }
 
-    fn head(&self) -> Pos {
-        self.board.snake(self.player).head()
-    }
-
     fn pick(&self) -> Move {
         minmax::pick(self)
     }
@@ -214,11 +213,10 @@ impl fmt::Display for Node {
 
                 for (i, child) in node.edges.iter().enumerate() {
                     let name = format!(
-                        "{} [{}] - {} - {:?}",
+                        "{} [{}] {}",
                         child.moved,
                         child.next.player.0,
                         minmax::score(node, child),
-                        child.next.head(),
                     );
                     pprint_tree(f, &child.next, name, prefix.to_string(), i == last_child)?;
                 }

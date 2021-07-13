@@ -13,59 +13,59 @@ board:
 
 tree:
 |- Root [0] down
-   |- up [0] - inf - (0, 9)
-   |  |- up [0] - inf - (0, 10)
-   |  |  |- up [0] - inf - (0, 11)
-   |  |  |- down [0] - inf - (0, 9)
-   |  |  |- left [0] - inf - (-1, 10)
-   |  |  |- right [0] - inf - (1, 10)
-   |  |- down [0] - inf - (0, 8)
-   |  |  |- up [0] - inf - (0, 9)
-   |  |  |- down [0] - 0 - (0, 7)
-   |  |  |- left [0] - inf - (-1, 8)
-   |  |  |- right [0] - inf - (1, 8)
-   |  |- left [0] - inf - (-1, 9)
-   |  |- right [0] - inf - (1, 9)
-   |     |- up [0] - inf - (1, 10)
-   |     |- down [0] - inf - (1, 8)
-   |     |- left [0] - inf - (0, 9)
-   |     |- right [0] - 0 - (2, 9)
-   |- down [0] - 0 - (0, 7)
-   |  |- up [0] - inf - (0, 8)
-   |  |  |- up [0] - 0 - (0, 9)
-   |  |  |- down [0] - inf - (0, 7)
-   |  |  |- left [0] - inf - (-1, 8)
-   |  |  |- right [0] - inf - (1, 8)
-   |  |- down [0] - 0 - (0, 6)
-   |  |  |- up [0] - inf - (0, 7)
-   |  |  |- down [0] - 0 - (0, 5)
-   |  |  |- left [0] - inf - (-1, 6)
-   |  |  |- right [0] - 0 - (1, 6)
-   |  |- left [0] - inf - (-1, 7)
-   |  |- right [0] - 0 - (1, 7)
-   |     |- up [0] - inf - (1, 8)
-   |     |- down [0] - 0 - (1, 6)
-   |     |- left [0] - inf - (0, 7)
-   |     |- right [0] - 0 - (2, 7)
-   |- left [0] - inf - (-1, 8)
-   |- right [0] - inf - (1, 8)
-      |- up [0] - inf - (1, 9)
-      |  |- up [0] - inf - (1, 10)
-      |  |- down [0] - inf - (1, 8)
-      |  |- left [0] - 0 - (0, 9)
-      |  |- right [0] - 0 - (2, 9)
-      |- down [0] - 0 - (1, 7)
-      |  |- up [0] - inf - (1, 8)
-      |  |- down [0] - 0 - (1, 6)
-      |  |- left [0] - 0 - (0, 7)
-      |  |- right [0] - 0 - (2, 7)
-      |- left [0] - inf - (0, 8)
-      |  |- up [0] - 0 - (0, 9)
-      |  |- down [0] - 0 - (0, 7)
-      |  |- left [0] - inf - (-1, 8)
-      |  |- right [0] - inf - (1, 8)
-      |- right [0] - 0 - (2, 8)
-         |- up [0] - 0 - (2, 9)
-         |- down [0] - 0 - (2, 7)
-         |- left [0] - inf - (1, 8)
-         |- right [0] - 0 - (3, 8)
+   |- up [0] inf
+   |  |- up [0] inf
+   |  |  |- up [0] inf
+   |  |  |- down [0] inf
+   |  |  |- left [0] inf
+   |  |  |- right [0] inf
+   |  |- down [0] inf
+   |  |  |- up [0] inf
+   |  |  |- down [0] 0
+   |  |  |- left [0] inf
+   |  |  |- right [0] inf
+   |  |- left [0] inf
+   |  |- right [0] inf
+   |     |- up [0] inf
+   |     |- down [0] inf
+   |     |- left [0] inf
+   |     |- right [0] 0
+   |- down [0] 4
+   |  |- up [0] inf
+   |  |  |- up [0] 0
+   |  |  |- down [0] inf
+   |  |  |- left [0] inf
+   |  |  |- right [0] inf
+   |  |- down [0] 2
+   |  |  |- up [0] inf
+   |  |  |- down [0] 0
+   |  |  |- left [0] inf
+   |  |  |- right [0] 0
+   |  |- left [0] inf
+   |  |- right [0] 2
+   |     |- up [0] inf
+   |     |- down [0] 0
+   |     |- left [0] inf
+   |     |- right [0] 0
+   |- left [0] inf
+   |- right [0] inf
+      |- up [0] inf
+      |  |- up [0] inf
+      |  |- down [0] inf
+      |  |- left [0] 0
+      |  |- right [0] 0
+      |- down [0] 1
+      |  |- up [0] inf
+      |  |- down [0] 0
+      |  |- left [0] 0
+      |  |- right [0] 0
+      |- left [0] inf
+      |  |- up [0] 0
+      |  |- down [0] 0
+      |  |- left [0] inf
+      |  |- right [0] inf
+      |- right [0] 1
+         |- up [0] 0
+         |- down [0] 0
+         |- left [0] inf
+         |- right [0] 0
