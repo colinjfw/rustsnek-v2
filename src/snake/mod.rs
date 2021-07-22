@@ -4,7 +4,7 @@ mod minmax;
 #[cfg(test)]
 mod tests;
 
-pub use api::run;
+pub use api::Runner;
 use std::fmt;
 use std::time::Duration;
 
@@ -91,9 +91,14 @@ impl Snake {
 }
 
 #[derive(Clone, Debug)]
-struct Board {
+struct Game {
     width: isize,
     height: isize,
+}
+
+#[derive(Clone, Debug)]
+struct Board {
+    game: Game,
     snakes: Vec<Snake>,
     food: Vec<Pos>,
 }
@@ -106,16 +111,16 @@ impl Board {
     }
 
     fn get(&self, pos: Pos) -> Square {
-        if pos.0 < 0 || pos.1 < 0 || pos.0 >= self.width || pos.1 >= self.height {
+        if pos.0 < 0 || pos.1 < 0 || pos.0 >= self.game.width || pos.1 >= self.game.height {
             return Square::Off;
         };
-        for food in &self.food {
+        for food in self.food.iter() {
             if *food == pos {
                 return Square::Food;
             };
         }
         for (i, snake) in self.snakes.iter().enumerate() {
-            for point in &snake.body {
+            for point in snake.body.iter() {
                 if *point == pos {
                     return Square::Snake(SnakeID(i));
                 }
@@ -159,10 +164,6 @@ impl Node {
         self.edges.is_empty()
     }
 
-    fn walk(board: Board, opts: Options) -> Node {
-        minmax::walk(board, opts)
-    }
-
     fn pick(&self) -> Move {
         minmax::pick(self)
     }
@@ -175,10 +176,10 @@ struct Options {
 
 impl fmt::Display for Board {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        for row in 0..self.height {
-            let y = self.height - row - 1;
+        for row in 0..self.game.height {
+            let y = self.game.height - row - 1;
             write!(f, "  ")?;
-            for x in 0..self.width {
+            for x in 0..self.game.width {
                 match self.get((x, y)) {
                     Square::Snake(i) => write!(f, "{} ", i.0)?,
                     Square::Food => write!(f, "F ")?,

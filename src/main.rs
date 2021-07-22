@@ -1,3 +1,5 @@
+#![feature(test)]
+
 mod alloc;
 mod api;
 mod snake;
@@ -24,6 +26,7 @@ const HTTP_OK: &[u8] = "HTTP/1.1 200 OK\r\ncontent-type: application/json\r\n\r\
 struct Handler {
     response_buf: Vec<u8>,
     request_buf: Vec<u8>,
+    runner: snake::Runner,
 }
 
 impl Handler {
@@ -61,7 +64,7 @@ impl Handler {
                 "/move" => {
                     let req: api::MoveRequest = serde_json::from_slice(content)?;
                     info!("/move request: {}", str::from_utf8(content).unwrap());
-                    let direction = snake::run(&req);
+                    let direction = self.runner.run(&req);
                     serde_json::to_writer(
                         &mut self.response_buf,
                         &api::MoveResponse { direction },
@@ -83,6 +86,7 @@ fn server(s: &'static str) {
     let mut handler = Handler {
         request_buf: Vec::with_capacity(12288),
         response_buf: Vec::with_capacity(12288),
+        runner: snake::Runner::new(),
     };
     let listener = TcpListener::bind(s).unwrap();
     info!("listener started on {}", s);

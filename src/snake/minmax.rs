@@ -3,20 +3,6 @@ use std::time::Instant;
 
 const INF: f32 = std::f32::INFINITY;
 
-pub(super) fn walk(board: Board, opts: Options) -> Node {
-    let node = Node {
-        board,
-        player: SnakeID(0),
-        edges: Vec::with_capacity(4),
-        result: Result::None,
-    };
-    Walker {
-        opts: opts,
-        start: Instant::now(),
-    }
-    .walk(node, SnakeID(0), 0)
-}
-
 pub(super) fn pick(node: &Node) -> Move {
     let mut min = (Move::Up, INF);
     for edge in &node.edges {
@@ -111,70 +97,89 @@ pub(super) fn score(source: &Node, edge: &Edge) -> f32 {
     }
 }
 
-struct Walker {
+pub(super) struct Walker {
     opts: Options,
     start: Instant,
 }
 
 impl Walker {
+    pub(super) fn new() -> Walker {
+        Walker{
+            opts: Options{ max_depth: 0, sla: Duration::from_secs(0) },
+            start: Instant::now(),
+        }
+    }
+
+    pub(super) fn walk(&mut self, board: Board, opts: Options) -> Node {
+        let node = Node {
+            board,
+            player: SnakeID(0),
+            edges: Vec::with_capacity(4),
+            result: Result::None,
+        };
+        self.opts = opts;
+        self.start = Instant::now();
+        self.walk_node(node, SnakeID(0), 0)
+    }
+
     fn prune(&self, node: &Node, depth: usize) -> bool {
         (node.player.is_me() && matches!(node.result, Result::Off))
             || depth >= self.opts.max_depth
             || self.start.elapsed() >= self.opts.sla
     }
 
-    fn walk(&mut self, mut node: Node, player: SnakeID, depth: usize) -> Node {
+    fn walk_node(&mut self, mut node: Node, player: SnakeID, depth: usize) -> Node {
         if self.prune(&node, depth) {
             return node;
         }
         for m in Move::all() {
-            let next = play(&node.board, m, player);
+            let next = self.play(&node.board, m, player);
             let next_edge = Edge {
                 moved: m,
-                next: self.walk(next, node.board.next_player(player), depth + 1),
+                next: self.walk_node(next, node.board.next_player(player), depth + 1),
             };
             node.edges.push(next_edge);
         }
         node
     }
-}
 
-fn play(board: &Board, m: Move, player: SnakeID) -> Node {
-    let head = board.snake(player).head();
-    let next_head = m.next(head);
-    let mut next_board = board.clone();
-    let mut next_snake = next_board.snake(player).clone();
+    fn play(&mut self, board: &Board, m: Move, player: SnakeID) -> Node {
+        let head = board.snake(player).head();
+        let next_head = m.next(head);
+        let mut next_board = board.clone();
+        let mut next_snake = next_board.snake(player).clone();
 
-    let result = match next_board.get(next_head) {
-        Square::Off => Result::Off,
-        Square::Food => {
-            next_board.remove_food(next_head);
-            Result::Eat
-        }
-        Square::Empty => {
-            next_snake.body.pop();
-            Result::None
-        }
-        Square::Snake(s) => {
-            let snake = next_board.snake(s);
-            if next_snake.len() > snake.len() && next_head == snake.head() {
-                if s.is_me() {
-                    Result::KillMe
-                } else {
-                    Result::Kill
-                }
-            } else {
-                Result::Dead
+        let result = match next_board.get(next_head) {
+            Square::Off => Result::Off,
+            Square::Food => {
+                next_board.remove_food(next_head);
+                Result::Eat
             }
-        }
-    };
+            Square::Empty => {
+                next_snake.body.pop();
+                Result::None
+            }
+            Square::Snake(s) => {
+                let snake = next_board.snake(s);
+                if next_snake.len() > snake.len() && next_head == snake.head() {
+                    if s.is_me() {
+                        Result::KillMe
+                    } else {
+                        Result::Kill
+                    }
+                } else {
+                    Result::Dead
+                }
+            }
+        };
 
-    next_snake.body.insert(0, next_head);
-    next_board.set_snake(player, next_snake);
-    Node {
-        player,
-        edges: Vec::with_capacity(4),
-        result,
-        board: next_board,
+        next_snake.body.insert(0, next_head);
+        next_board.set_snake(player, next_snake);
+        Node {
+            player,
+            edges: Vec::with_capacity(4),
+            result,
+            board: next_board,
+        }
     }
 }
