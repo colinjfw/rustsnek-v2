@@ -60,13 +60,10 @@ impl Runner {
             }
             snakes.push(Snake::new(snake_body));
         }
-        Board {
-            game: Game {
-                width: req.board.width.try_into().unwrap(),
-                height: req.board.height.try_into().unwrap(),
-            },
-            snakes: snakes,
-            food: food,
-        }
+        let game = Game {
+            width: req.board.width.try_into().unwrap(),
+            height: req.board.height.try_into().unwrap(),
+        };
+        Board::new(game, snakes, food)
     }
 }

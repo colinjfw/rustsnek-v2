@@ -1,4 +1,5 @@
 #![feature(test)]
+#![feature(once_cell)]
 
 mod alloc;
 mod api;

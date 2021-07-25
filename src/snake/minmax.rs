@@ -156,7 +156,7 @@ impl Walker {
                 Result::Eat
             }
             Square::Empty => {
-                next_snake.body.pop();
+                next_snake.remove_tail();
                 Result::None
             }
             Square::Snake(s) => {
@@ -173,7 +173,7 @@ impl Walker {
             }
         };
 
-        next_snake.body.insert(0, next_head);
+        next_snake.change_head(next_head);
         next_board.set_snake(player, next_snake);
         Node {
             player,

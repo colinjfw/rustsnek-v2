@@ -30,14 +30,11 @@ impl Scenario {
     }
 
     fn prepare(&self) -> (Board, Options) {
-        let board = Board {
-            game: Game {
-                width: self.width,
-                height: self.height,
-            },
-            food: self.food.clone(),
-            snakes: self.snakes.clone(),
+        let game = Game {
+            width: self.width,
+            height: self.height,
         };
+        let board = Board::new(game, self.snakes.clone(), self.food.clone());
         let opts = Options {
             max_depth: self.depth,
             sla: Duration::from_secs(20),

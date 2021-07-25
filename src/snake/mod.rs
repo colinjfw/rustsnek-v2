@@ -33,7 +33,7 @@ impl Move {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug)]
 enum Result {
     None,
     Eat,
@@ -88,6 +88,14 @@ impl Snake {
     fn new(body: Vec<Pos>) -> Snake {
         Snake { body }
     }
+
+    fn remove_tail(&mut self) {
+        self.body.pop();
+    }
+
+    fn change_head(&mut self, pos: Pos) {
+        self.body.insert(0, pos);
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -104,6 +112,22 @@ struct Board {
 }
 
 impl Board {
+    // fn default() -> Board {
+    //     Board {
+    //         game: Game{ width: 0, height: 0 },
+    //         snakes: Vec::with_capacity(10),
+    //         food: Vec::with_capacity(10),
+    //     }
+    // }
+
+    fn new(game: Game, snakes: Vec<Snake>, food: Vec<Pos>) -> Board {
+        Board{
+            game,
+            snakes: snakes,
+            food: food,
+        }
+    }
+
     fn remove_food(&mut self, pos: Pos) {
         if let Some(idx) = self.food.iter().position(|food| *food == pos) {
             self.food.remove(idx);
@@ -129,7 +153,7 @@ impl Board {
         Square::Empty
     }
 
-    fn snake(&self, player: SnakeID) -> &Snake {
+    fn snake(&self, player: SnakeID) -> &'_ Snake {
         &self.snakes[player.0]
     }
 
@@ -145,13 +169,13 @@ impl Board {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Debug)]
 struct Edge {
     next: Node,
     moved: Move,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Debug)]
 struct Node {
     board: Board,
     edges: Vec<Edge>,
